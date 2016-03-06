@@ -1,5 +1,7 @@
 package hillbillies.model;
-
+/**
+ * @value
+ */
 import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Raw;
 /**
@@ -28,7 +30,6 @@ import be.kuleuven.cs.som.annotate.Raw;
 
 public class TimeState {
 	
-//ATTACK TIME
 /**
  * Variable registering the attackTime of this timeState.
  */
@@ -73,7 +74,7 @@ public void setAttackTime(double attackTime) {
 }
 
 
-//TRACKTIMESPRINT
+
 /**
  * Variable registering the trackTimeSprint of this timeState.
  */
@@ -115,7 +116,7 @@ public void setTrackTimeSprint(double trackTimeSprint) {
 	this.trackTimeSprint = trackTimeSprint;
 }
 
-//TIMERESTED
+
 /**
  * Variable registering the timeRested of this timeState.
  */
@@ -160,7 +161,7 @@ public void setTimeRested(double timeRested) {
 }
 
 
-//TRACKTIMEREST
+
 /**
  * Variable registering the trackTimeRest of this timeState.
  */
@@ -205,8 +206,6 @@ public void setTrackTimeRest(double trackTimeRest) {
 	this.trackTimeRest = trackTimeRest;
 }
 
-//TIMESINCEREST
-
 /**
  * Variable registering the timeSinceRest of this timeState.
  */
@@ -249,8 +248,6 @@ public void setTimeSinceRest(double timeSinceRest) {
 	assert isValidTimeSinceRest(timeSinceRest);
 	this.timeSinceRest = timeSinceRest;
 }
-
-//TRACKTIMEWORK
 
 /**
  * Variable registering the trackTimeWork of this timeState.
@@ -295,8 +292,6 @@ public void setTrackTimeWork(double trackTimeWork) {
 	assert isValidTrackTimeWork(trackTimeWork);
 	this.trackTimeWork = trackTimeWork;
 }
-
-
 
 
 }

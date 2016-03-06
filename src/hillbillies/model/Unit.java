@@ -1,5 +1,11 @@
 package hillbillies.model;
 
+/**
+ * @author Wout Van Medegael - 2de bach B. Ir. CW-ESAT
+ * @author Adriaan Van Gerven - 2de bach B. Ir. CW-ESAT
+ * Github repository: https://github.com/woutvm-peno/Hillbillies.git
+ */
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -10,13 +16,13 @@ import be.kuleuven.cs.som.annotate.Raw;
 /**
  * @invar  The xpos of each Unit must be a valid xpos for any
  *         Unit.
- *       | isValidpos(getxpos())
+ *       | getMyPosition().isValidPos(getxpos())
  * @invar  The ypos of each unit must be a valid ypos for any
  *         unit.
- *       | isValidpos(getypos())
+ *       | getMyPosition().isValidPos(getypos())
  * @invar  The zpos of each unit must be a valid zpos for any
  *         unit.
- *       | isValidpos(getzpos())
+ *       | getMyPosition().isValidPos(getzpos())
  * @invar  The name of each unit must be a valid name for any
  *         unit.
  *       | isValidName(getName())
@@ -48,25 +54,24 @@ import be.kuleuven.cs.som.annotate.Raw;
  */
 public class Unit {
 
-//DEFENSIVELY
 /**
  * Initialize this new Unit with given xpos, ypos, zpos ,name, weight, strength, agility, toughness
  *
  * @param  xpos
- *         The xpos for this new Unit.
+ *         The xpos for the position for this new Unit.
  * @param  ypos
- * 		   The ypos for this new Unit
+ * 		   The ypos for the position for this new Unit
  * @param  zpos
- * 		   The zpos for this new Unit
+ * 		   The zpos for the position for this new Unit
  * @param  name
  *         The name for this new unit.
- * @effect The xpos of this new Unit is set to
+ * @effect The xpos of the position of this new Unit is set to
  *         the given xpos.
  *       | this.setxpos(xpos)
- * @effect The ypos of this new Unit is set to
+ * @effect The ypos of the position of this new Unit is set to
  *         the given ypos.
  *       | this.setxpos(ypos)
- * @effect The zpos of this new Unit is set to
+ * @effect The zpos of the position of this new Unit is set to
  *         the given zpos.
  *       | this.setxpos(zpos)
  * @effect The name of this new unit is set to
@@ -75,13 +80,13 @@ public class Unit {
  * @throws UnitException
  * 		   The given xpos,ypos or zpos is not a valid pos for
  * 		   a unit.
- *       | !isValidPos(pos)  
+ *       | !this.getMyPosition().isValidPos(pos)  
  * @throws IllegalNameException
  * 		   The given name is not a valid name for
  * 		   a unit.
  *       | !isValidName(name) 
  */
-//TOTAL
+
 /**
  * @param  strength
  *         The strength for this new unit.
@@ -136,7 +141,7 @@ public class Unit {
  *       |   then new.gettoughness() == MAXFIRST
  *       | else new.gettoughness() == MINFIRST
  */
-//NOMINAL
+	
 /**
  * @param  currentHP
  *         The currentHP for this new unit.
@@ -153,25 +158,23 @@ public class Unit {
  *         currentSP.
  *       | new.getCurrentSP() == currentSP
  */
-//TOTAL
+	
 /**
- * @param  orientation
- *         The orientation for this new unit.
- * @post   If the given orientation is a valid orientation for any unit,
- *         the orientation of this new unit is equal to the given
- *         orientation. Otherwise, the orientation of this new unit is equal
- *         to the orientation modulo 2 PI expressed as a positive angle.
- *       | if (isValidOrientation(orientation))
- *       |   then new.getOrientation() == orientation
- *       | else if (orientation % (float) 2*Math.PI => 0)
- *       |   then new.getOrientation() == orientation % (float) 2*Math.PI
- *       | else new.getOrientation() == orientation % (float) 2*Math.PI + 2*Math.PI
+ * @effect Local target is initialized at this position
+ * 		   | this.setLocalTarget(new Position(xpos+0.5,ypos+0.5,zpos+0.5));
+ */
+	
+/**
+ * @param enableDefaultBehaviour
+ * 			Boolean if default behaviour is enabled.
+ * @effect Default behaviour is enabled or disabled.
+ * 		   | setDefaultBehaviourEnabled(enableDefaultBehaviour)
  */
 
 public Unit(double xpos,double ypos,double zpos,String name,int weight,int strength,int agility, int toughness, boolean enableDefaultBehaviour)
 		throws UnitException {
-	myPosition = new Position((double)((int)xpos+0.5),(double)((int)ypos+0.5),(double)((int)zpos+0.5));
-	localTarget = new Position((double)((int)xpos+0.5),(double)((int)ypos+0.5),(double)((int)zpos+0.5));
+	this.setMyPosition(new Position((double)((int)xpos+0.5),(double)((int)ypos+0.5),(double)((int)zpos+0.5)));
+	this.setLocalTarget(new Position((double)((int)xpos+0.5),(double)((int)ypos+0.5),(double)((int)zpos+0.5)));
 	this.setName(name);
 	
 	
@@ -221,13 +224,6 @@ public Unit(double xpos,double ypos,double zpos,String name,int weight,int stren
 	this.setCurrentHP(this.getMaxHP());
 	this.setCurrentSP(this.getMaxSP());
 	
-	//orientation = (float)Math.PI/2;
-	if (! isValidOrientation(orientation))
-		orientation  %= (float) 2*Math.PI;
-		if (orientation<0){
-			orientation+=(float)2*Math.PI;}
-	setOrientation(orientation);
-	
 	setDefaultBehaviourEnabled(enableDefaultBehaviour);
 }
 
@@ -245,6 +241,7 @@ public Unit(double xpos,double ypos,double zpos,String name,int weight,int stren
 private boolean validStrengthAgilityWeight(int weight, int strength, int agility){
 	return ((strength+agility) /2 <= weight);
 }
+
 /**
  * Variable registering whether the default behaviour is enabled
  */
@@ -254,15 +251,16 @@ private boolean defaultBehaviourEnabled;
  * Enable or disable the default behaviour for this unit.
  * @param enabled
  * 			The boolean which enables default behaviour.
- * @post The default beheauviour is enabled or disabled
+ * @post The default behaviour is enabled or disabled
  * 			| new.getDefaultBehaviourEnabled() == enabled
  * 	
  */
 public void setDefaultBehaviourEnabled(boolean enabled){
 	this.defaultBehaviourEnabled = enabled;
 }
+
 /**
- * returns wheter the default beheaviour is enabled
+ * Returns whether the default behaviour is enabled
  */
 public boolean getDefaultBehaviourEnabled(){
 	return this.defaultBehaviourEnabled;
@@ -281,6 +279,7 @@ private final NbCompare nbComp = new NbCompare();
 public double getxpos() {
 	return this.getMyPosition().getxpos();
 }
+
 /**
  * Set the xpos of this Unit to the given xpos.
  * 
@@ -290,9 +289,9 @@ public double getxpos() {
  *         the given xpos.
  *       | new.getxpos() == xpos
  * @throws UnitException
- *         The given xpos is not a valid xpos for any
+ *         The given xpos is not a valid xpos for the position of any
  *         Unit.
- *       | ! isValidpos(getxpos())
+ *       | !this.getMyPosition().isValidPos(getxpos())
  */
 @Raw
 public void setxpos(double xpos) 
@@ -318,15 +317,13 @@ public double getypos() {
  *         the given ypos.
  *       | new.getypos() == ypos
  * @throws UnitException
- *         The given ypos is not a valid ypos for any
+ *         The given ypos is not a valid ypos for the position of any
  *         unit.
- *       | ! isValidpos(getypos())
+ *       | !this.getMyPosition().isValidPos(getypos())
  */
 @Raw
 public void setypos(double ypos) 
 		throws UnitException {
-	if (! isValidPos(ypos))
-		throw new UnitException();
 	this.getMyPosition().setypos(ypos);
 }
 
@@ -348,31 +345,15 @@ public double getzpos() {
  *         the given zpos.
  *       | new.getzpos() == zpos
  * @throws UnitException
- *         The given zpos is not a valid zpos for any
+ *         The given zpos is not a valid zpos for the position of any
  *         Unit.
- *       | ! isValidpos(getzpos())
+ *       | !this.getMyPosition().isValidPos(getzpos())
  */
 @Raw
 public void setzpos(double zpos) 
 		throws UnitException {
-	if (! isValidPos(zpos))
-		throw new UnitException();
 	this.getMyPosition().setzpos(zpos);
 }
-
-/**
-* Check whether the given pos is a valid pos for
- * any unit.
- *  
- * @param  pos
- *         The pos to check.
- * @return 
- *       | result == (0<=pos && pos<50)
-*/
-public static boolean isValidPos(double pos) {
-	return (0<=pos && pos<50);
-}
-
 
 /**
  * Variable registering the name of this unit.
@@ -453,6 +434,10 @@ public void setName(String name)
 	this.name = name;
 }
 
+/**
+ * The minimum and maximum for the weight, agility, toughness and strength for this unit. 
+ * The bordervalues for initialization are different from those later on.
+ */
 private final static int MIN = 1;
 private static final int MAX = 200;
 final private static int MINFIRST = 25;
@@ -463,7 +448,6 @@ static final private int MAXFIRST = 100;
 /**
  * Variables registering the weight, strength, agility and toughness of this unit.
  */
-
 private int weight;
 private int strength;
 private int agility;
@@ -485,8 +469,7 @@ public static boolean isValidParamFirstTime(int param){
 }
 
 /**
- 
-* Return the weight of this unit.
+ * Return the weight of this unit.
  */
 @Basic @Raw
 public int getWeight() {
@@ -659,7 +642,6 @@ public void setAgility(int agility) {
 	changeWeightIfNeeded();
 }
 
-//TOUGHNESS
 /**
 * Return the toughness of this unit.
 */
@@ -711,8 +693,6 @@ public void setToughness(int toughness) {
 		this.toughness = MIN;
 	}
 }
-
-//HITPOINTS AND STAMINA POINTS
 
 /**
  * Variable registering the currentHP of this unit.
@@ -820,8 +800,6 @@ public void setCurrentSP(int currentSP) {
 	this.currentSP = currentSP;
 }
 
-
-//ORIENTATION
 /**
  * Variable registering the orientation of this unit, initialized at PI/2
  */
@@ -997,30 +975,30 @@ public void setToggledSprint(boolean toggledSprint)  {
 
 
 /**
- * Variable registering the currentTarget of this unit.
+ * Variable registering the defender of this unit.
  */
-private Unit currentPrey;
+private Unit defender;
 
 /**
- * Return the currentTarget of this unit.
+ * Return the defender of this unit.
  */
 @Basic @Raw
-public Unit getCurrentTarget() {
-	return this.currentPrey;
+public Unit getDefender() {
+	return this.defender;
 }
 
 /**
- * Set the currentTarget of this unit to the given currentTarget.
+ * Set the defender of this unit to the given defender.
  * 
- * @param  currentTarget
- *         The new currentTarget for this unit.
- * @post   The currentTarget of this new unit is equal to
- *         the given currentTarget.
- *       | new.getCurrentTarget() == currentTarget
+ * @param  defender
+ *         The new defender for this unit.
+ * @post   The defender of this new unit is equal to
+ *         the given defender.
+ *       | new.getDefender() == defender
  */
 @Raw
-public void setCurrentTarget(Unit currentTarget){
-	this.currentPrey = currentTarget;
+public void setDefender(Unit defender){
+	this.defender = defender;
 }
 
 /**
@@ -1059,27 +1037,24 @@ public boolean isResting(){
 	return (this.getMyState()==CurrentState.RESTING && this.getMyPosition().Equals(this.getLocalTarget()));
 }
 
-
-
-//BASIC MOVEMENT
 /**
  * Returns the xpos of the cube on which the unit is standing.
  */
 public int getCubeXpos(){
-	return (int)this.getMyPosition().getxpos();
+	return (int)this.getxpos();
 }
 /**
  * Returns the ypos of the cube on which the unit is standing.
  */
 public int getCubeYpos(){
-	return (int)this.getMyPosition().getypos();
+	return (int)this.getypos();
 }
 
 /**
  * Returns the zpos of the cube on which the unit is standing.
  */
 public int getCubeZpos(){
-	return (int) this.getMyPosition().getzpos();
+	return (int) this.getzpos();
 }
 
 
@@ -1098,7 +1073,7 @@ public double getSpeed() {
  * Check whether the given speed is a valid speed for
  * any unit.
  *  
- * @param  d
+ * @param  speed
  *         The speed to check.
  * @return Returns true if and only if the speed is greater than or equal
  *       | result == (speed>=0)
@@ -1109,7 +1084,7 @@ public static boolean isValidSpeed(double speed) {
 /**
  * Set the speed of this unit to the given speed.
  * 
- * @param  d
+ * @param  speed
  *         The new speed for this unit.
  * @post   The speed of this new unit is equal to
  *         the given speed.
@@ -1120,11 +1095,11 @@ public static boolean isValidSpeed(double speed) {
  *       | !isValidSpeed(getSpeed())
  */
 @Raw
-public void setSpeed(double d) 
+public void setSpeed(double speed) 
 		throws UnitException {
-	if (! isValidSpeed(d))
+	if (! isValidSpeed(speed))
 		throw new UnitException();
-	this.speed = d;
+	this.speed = speed;
 }
 
 /**
@@ -1141,18 +1116,18 @@ public void setSpeed(double d)
  *        0 or 1.
  * @post  If the unit isn't attacking, moving or defending and this.getHasRested is true, the CurrentState will be 
  * 		  set to moving
- * 		  | if (!(this.getMyState()==CurrentState.ATTACKING || this.getMyState()==CurrentState.MOVING || myState == CurrentState.DEFENDING) && hasRested)
+ * 		  | if (!(this.getMyState()==CurrentState.ATTACKING || this.getMyState()==CurrentState.MOVING || this.getMyState() == CurrentState.DEFENDING) && this.getHasRested())
  *        | then new.getMyState()==CurrentState.MOVING      
  * @effect if the unit isn't attacking, moving or defending and this.getHasRested is true, 
  * 		   the local target and speed are set with parameters dx,dy,dz.
- * 		  | if (!(this.getMyState()==CurrentState.ATTACKING || this.getMyState()==CurrentState.MOVING || myState == CurrentState.DEFENDING) && hasRested)
+ * 		  | if (!(this.getMyState()==CurrentState.ATTACKING || this.getMyState()==CurrentState.MOVING || this.getMyState() == CurrentState.DEFENDING) && this.getHasRested())
  *        | then setLocalTargetAndSpeed(dx,dy,dz)
  * @throws UnitException
  *         An exception is thrown if the given move is not a valid move for this unit.
- *         | !isValidMove(new in([]{dx,dy,dz}))
+ *        | !isValidMove(new in([]{dx,dy,dz}))
  */	
 public void moveToAdjacent(int dx, int dy, int dz) throws UnitException{
-	if (!(this.getMyState()==CurrentState.ATTACKING || this.getMyState()==CurrentState.MOVING || this.getMyState() == CurrentState.DEFENDING) && hasRested){
+	if (!(this.getMyState()==CurrentState.ATTACKING || this.getMyState()==CurrentState.MOVING || this.getMyState() == CurrentState.DEFENDING) && this.getHasRested()){
 		this.setMyState(CurrentState.MOVING);
 		if (!isValidMove(new int[]{dx,dy,dz})){
 			throw new UnitException();
@@ -1162,9 +1137,6 @@ public void moveToAdjacent(int dx, int dy, int dz) throws UnitException{
 		}
 	
 }
-
-
-//____________________________________________TOT HIER IS COMMENTAAR VOLLEDIG _____________________________________________
 
 /**
  * Variable used for keeping track of the position of the unit 
@@ -1180,6 +1152,15 @@ private Position getMyPosition() {
 }
 
 /**
+* Sets the position of this unit to the given position
+* @note Doesn't throw an exception. Position pos has to be valid to exist. See Position class invariants.
+*/
+@Raw
+public void setMyPosition(Position pos){
+	this.myPosition = pos;
+}
+
+/**
  * 
  * Set the local target of the unit and calculate and set the speed of the unit.
  * @param dx
@@ -1192,21 +1173,19 @@ private Position getMyPosition() {
  *         The amount of cubes to move in the z-direction; should be -1,
  *         0 or 1.
  * @post  The variable localTarget is set to the middle of the neighbouring target cube.
- * 		 | new.localTarget.getxpos()==this.getCubeXpos()+dx+0.5;
- *		 | new.localTarget.getypos()==this.getCubeYpos()+dy+0.5;
- *		 | new.localTarget.getzpos()==this.getCubeZpos()+dz+0.5;
+ * 		 | new.getLocalTarget().getxpos()==this.getCubeXpos()+dx+0.5;
+ *		 | new.getLocalTarget().getypos()==this.getCubeYpos()+dy+0.5;
+ *		 | new.getLocalTarget().getzpos()==this.getCubeZpos()+dz+0.5;
  * @effect The velocity is calculated.	 
  *		 | calculateVelocity(dz)
  * @throws UnitException
- * 			//TODO obvious exception
  *         One of the target coordinates is invalid, or the speed is negative (IMPOSSIBLE).
  *       | !(isValidPos(this.getCubeXpos()+dx+0.5) && isValidPos(this.getCubeYpos()+dy+0.5) 
  *       | && isValidPos(this.getCubeZpos()+dz+0.5) && isValidSpeed(calculateVelocity()))
+ * @note This exception won't be thrown.
  */
 private void setLocalTargetAndSpeed(int dx, int dy, int dz) throws UnitException{
-	localTarget.setxpos(this.getCubeXpos()+dx+0.5);
-	localTarget.setypos(this.getCubeYpos()+dy+0.5);
-	localTarget.setzpos(this.getCubeZpos()+dz+0.5);
+	this.setLocalTarget(new Position(this.getCubeXpos()+dx+0.5,this.getCubeYpos()+dy+0.5,this.getCubeZpos()+dz+0.5));
 	calculateVelocity(dz);
 
 }
@@ -1238,10 +1217,10 @@ private void calculateVelocity(int dz) throws UnitException {
 		velocity *= 1.2;
 	}
 	
-	if (toggledSprint){
+	if (this.getToggledSprint()){
 		velocity *= 2;
 	}
-
+ 
 	this.setSpeed(velocity);
 }
 
@@ -1250,7 +1229,7 @@ private void calculateVelocity(int dz) throws UnitException {
  * @param move
  * 			The move{dx,dy,dz} to be made.
  * @return True if all integers in move are -1, 0 or 1 and the target cube is a valid position for a unit. 
- * 		   | result == (for coo in move: (coo==0 || coo==1 || coo==-1) &&
+ * 		   | result == (for coo in move: (coo==0 || coo==1 || coo==-1)) &&
  * 		   |				isValidPos(this.getCubeXpos()+move[0]) &&
  * 		   |					isValidPos(this.getCubeYpos()+move[1]) && 
  * 		   | 						isValidPos(this.getCubeZpos()+move[2])) 								
@@ -1261,16 +1240,15 @@ private boolean isValidMove(int[] move){
 			return false;
 		}
 	}
-	if (!Unit.isValidPos(this.getCubeXpos()+move[0])){
+	if (!Position.isValidPos(this.getCubeXpos()+move[0])){
 		return false;
 	}
-	if (!Unit.isValidPos(this.getCubeYpos()+move[1])){
+	if (!Position.isValidPos(this.getCubeYpos()+move[1])){
 		return false;
 	}
-	if (!Unit.isValidPos(this.getCubeZpos()+move[2])){
+	if (!Position.isValidPos(this.getCubeZpos()+move[2])){
 		return false;
 	}
-	
 	return true;
 	
 }
@@ -1284,8 +1262,8 @@ private boolean isValidMove(int[] move){
  * 		  The y-coordinate of the cube where the unit needs to move to 
  * @param cubeZ
  *  	  The z-coordinate of the cube where the unit needs to move to 
- * @post  If the unit was not defending or attacking and hasRested() was true, it is set to moving and the globalTarget is assigned.
- * 		  | if (!(this.getMyState()==CurrentState.DEFENDING || this.getMyState() == CurrentState.ATTACKING) && hasRested)
+ * @post  If the unit was not defending or attacking and hasRested was true, it is set to moving and the globalTarget is assigned.
+ * 		  | if (!(this.getMyState()==CurrentState.DEFENDING || this.getMyState() == CurrentState.ATTACKING) && this.getHasRested())
  *		  | then new.getMyState() == CurrentState.MOVING
  *		  | new.getGlobalTarget().getxpos() == cubeX+0.5
  *		  | new.getGlobalTarget().getypos() == cubeY+0.5
@@ -1296,18 +1274,18 @@ private boolean isValidMove(int[] move){
  * 		  An exception is thrown if any of the coordinates is an invalid position for the cube
  */
 public void moveTo(int cubeX, int cubeY, int cubeZ) throws UnitException{
-	if (!(this.getMyState()==CurrentState.DEFENDING || this.getMyState() == CurrentState.ATTACKING) && hasRested){
+	if (!(this.getMyState()==CurrentState.DEFENDING || this.getMyState() == CurrentState.ATTACKING) && this.getHasRested()){
 		this.setMyState(CurrentState.MOVING);
-		if (!isValidPos(cubeX)){
+		if (!Position.isValidPos(cubeX)){
 			throw new UnitException();
 		}
-		if (!isValidPos(cubeY)){
+		if (!Position.isValidPos(cubeY)){
 			throw new UnitException();
 		}
-		if (!isValidPos(cubeZ)){
+		if (!Position.isValidPos(cubeZ)){
 			throw new UnitException();
 		}
-		globalTarget = new Position(cubeX+0.5, cubeY+0.5, cubeZ+0.5);
+		this.setGlobalTarget(new Position(cubeX+0.5, cubeY+0.5, cubeZ+0.5));
 		calculateLocalTarget();
 	}
 }
@@ -1338,19 +1316,19 @@ private void calculateLocalTarget() throws UnitException{
 	int dx = 0;
 	int dy = 0;
 	int dz = 0;
-	if (nbComp.isBigger(this.getCubeXpos()+0.5, this.globalTarget.getxpos())){
+	if (nbComp.isBigger(this.getCubeXpos()+0.5, this.getGlobalTarget().getxpos())){
 		dx = -1;
-	} else if (nbComp.isSmaller(this.getCubeXpos()+0.5,this.globalTarget.getxpos())){
+	} else if (nbComp.isSmaller(this.getCubeXpos()+0.5,this.getGlobalTarget().getxpos())){
 		dx = 1;
 	}
-	if (nbComp.isBigger(this.getCubeYpos()+0.5, this.globalTarget.getypos())){
+	if (nbComp.isBigger(this.getCubeYpos()+0.5, this.getGlobalTarget().getypos())){
 		dy = -1;
-	} else if (nbComp.isSmaller(this.getCubeYpos()+0.5,this.globalTarget.getypos())){
+	} else if (nbComp.isSmaller(this.getCubeYpos()+0.5,this.getGlobalTarget().getypos())){
 		dy = 1;
 	}
-	if (nbComp.isBigger(this.getCubeZpos()+0.5, this.globalTarget.getzpos())){
+	if (nbComp.isBigger(this.getCubeZpos()+0.5, this.getGlobalTarget().getzpos())){
 		dz = -1;
-	} else if (nbComp.isSmaller(this.getCubeZpos()+0.5,this.globalTarget.getzpos())){
+	} else if (nbComp.isSmaller(this.getCubeZpos()+0.5,this.getGlobalTarget().getzpos())){
 		dz = 1;
 	}
 	setLocalTargetAndSpeed(dx,dy,dz);
@@ -1370,8 +1348,6 @@ private void calculateLocalTarget() throws UnitException{
  */
 public void advanceTime(double dt) throws UnitException{
 	
-	//this.setOrientation((float) (this.getOrientation()+Math.PI/4.0));
-	
 	if (dt<=0 || dt>0.2){
 		throw new UnitException();
 	}
@@ -1384,7 +1360,7 @@ public void advanceTime(double dt) throws UnitException{
 	
 	switch (this.getMyState()){
 		case NEUTRAL:
-			if ((globalTarget != null && !globalTarget.equals(this.getMyPosition()))){
+			if ((getGlobalTarget() != null && !getGlobalTarget().equals(this.getMyPosition()))){
 				this.setMyState(CurrentState.MOVING);
 			} else {
 			this.executeDefaultBehaviour();
@@ -1400,14 +1376,13 @@ public void advanceTime(double dt) throws UnitException{
 			if (!this.getMyPosition().Equals(this.getLocalTarget())){
 				this.move(dt);
 			} else {
-				System.out.println("resting");
 				this.rest(dt);
 			}
 			break;
 			//hier this.attacking
 		case ATTACKING:
 			if (this.getMyTimeState().getAttackTime()>1){
-				this.attack(currentPrey);
+				this.attack(this.getDefender());
 				break;
 			} else {
 				double attackTime = (this.getMyTimeState().getAttackTime()+dt);
@@ -1463,25 +1438,25 @@ private void move(double dt) throws UnitException{
  * @post If the unit hasn't arrived at its local target within dt, the position is calculated and set to
  * 			the corresponding intermediate position. Else, it is set to the local target.
  * 		| if (this.getSpeed*dt>this.getMyPosition().calculateDistance(this.getLocalTarget()))
- * 		| then new.getMyPosition().getxpos() == this.getLocalTarget().getxpos() &&
- * 		|	new.getMyPosition().getypos() == this.getLocalTarget().getypos() &&
- * 		|		new.getMyPosition().getzpos() == this.getLocalTarget().getzpos()
+ * 		| then new.getxpos() == this.getLocalTarget().getxpos() &&
+ * 		|	new.getypos() == this.getLocalTarget().getypos() &&
+ * 		|		new.getzpos() == this.getLocalTarget().getzpos()
  * 		| otherwise
- * 		|	new.getMyPosition().getxpos() == this.getMyPosition().getxpos()+
- * 		|			dt*this.getSpeed()*(this.getLocalTarget().getxpos()-this.getMyPosition.getxpos())/
+ * 		|	new.getxpos() == this.getxpos()+
+ * 		|			dt*this.getSpeed()*(this.getLocalTarget().getxpos()-this.getxpos())/
  * 		|				this.getMyPosition().calculateDistance(this.getLocalTarget())
- *		|	new.getMyPosition().getypos() == this.getMyPosition().getxypos()+
- * 		|			dt*this.getSpeed()*(this.getLocalTarget().getypos()-this.getMyPosition.getypos())/
+ *		|	new.getypos() == this.getypos()+
+ * 		|			dt*this.getSpeed()*(this.getLocalTarget().getypos()-this.getypos())/
  * 		|				this.getMyPosition().calculateDistance(this.getLocalTarget())
- * 		|	new.getMyPosition().getzpos() == this.getMyPosition().getzpos()+
- * 		|			dt*this.getSpeed()*(this.getLocalTarget().getzpos()-this.getMyPosition.getzpos())/
+ * 		|	new.getzpos() == this.getzpos()+
+ * 		|			dt*this.getSpeed()*(this.getLocalTarget().getzpos()-this.getzpos())/
  * 		|				this.getMyPosition().calculateDistance(this.getLocalTarget());
  * 
  * @post If the unit hasn't arrived at its local target within dt, the units orientation is set to face the local target.
- * 		| If (this.getSpeed*dt<this.getMyPosition().calculateDistance(this.getLocalTarget()))
- * 		| then new.getOrientation() == Math.atan2(this.getSpeed()*(this.getLocalTarget().getypos()-this.getMyPosition.getypos())/
+ * 		| If (this.getSpeed()*dt<this.getMyPosition().calculateDistance(this.getLocalTarget()))
+ * 		| then new.getOrientation() == Math.atan2(this.getSpeed()*(this.getLocalTarget().getypos()-this.getypos())/
  * 		|				this.getMyPosition().calculateDistance(this.getLocalTarget()),
- * 		|				this.getSpeed()*(this.getLocalTarget().getxpos()-this.getMyPosition.getxpos())/
+ * 		|				this.getSpeed()*(this.getLocalTarget().getxpos()-this.getxpos())/
  * 		|				this.getMyPosition().calculateDistance(this.getLocalTarget()))
  * @throws UnitException
  * 			An exception is thrown if an invalid coordinate is set.
@@ -1491,17 +1466,17 @@ private void updateLocationAndOrientation(double dt) throws UnitException {
 	double distance = this.getMyPosition().calculateDistance(this.getLocalTarget());
 	boolean hasArrivedAtLocalTarget = this.getSpeed()*dt>distance;
 	if (hasArrivedAtLocalTarget){
-		this.getMyPosition().setxpos(this.getLocalTarget().getxpos());
-		this.getMyPosition().setypos(this.getLocalTarget().getypos());
-		this.getMyPosition().setzpos(this.getLocalTarget().getzpos());
+		this.setxpos(this.getLocalTarget().getxpos());
+		this.setypos(this.getLocalTarget().getypos());
+		this.setzpos(this.getLocalTarget().getzpos());
 	} else {
 		double velocity = this.getSpeed();
-		float velocityx = (float) (velocity*(this.getLocalTarget().getxpos()-getMyPosition().getxpos())/distance);
-		float velocityy = (float) (velocity*(this.getLocalTarget().getypos()-getMyPosition().getypos())/distance);
-		float velocityz = (float) (velocity*(this.getLocalTarget().getzpos()-getMyPosition().getzpos())/distance);
-		this.getMyPosition().setxpos(this.getMyPosition().getxpos()+velocityx*dt);
-		this.getMyPosition().setypos(this.getMyPosition().getypos()+velocityy*dt);
-		this.getMyPosition().setzpos(this.getMyPosition().getzpos()+velocityz*dt);
+		float velocityx = (float) (velocity*(this.getLocalTarget().getxpos()-this.getxpos())/distance);
+		float velocityy = (float) (velocity*(this.getLocalTarget().getypos()-this.getypos())/distance);
+		float velocityz = (float) (velocity*(this.getLocalTarget().getzpos()-this.getzpos())/distance);
+		this.setxpos(this.getxpos()+velocityx*dt);
+		this.setypos(this.getypos()+velocityy*dt);
+		this.setzpos(this.getzpos()+velocityz*dt);
 		this.setOrientation((float) Math.atan2(velocityy,velocityx));
 	}
 }
@@ -1553,10 +1528,12 @@ private void reduceSPForSprint(double timeSprinted) throws UnitException {
  * @effect If it has a global target, but has arrived at its local target (not equal to global target), the next local target is calculated.
  * 		 | calculateLocalTarget()
  * @throws UnitException
- * 			UnitException is thrown if setSpeed()
+ * 			UnitException is thrown if setSpeed() or calculateLocalTarget throws an exception.
+ * 
  */
 private void determineLocalTarget() throws UnitException{
-	if ((this.getGlobalTarget() == null && this.getMyPosition().Equals(this.getLocalTarget())) || ((this.getGlobalTarget() != null) && this.getMyPosition().Equals(this.getGlobalTarget()))){
+	if ((this.getGlobalTarget() == null && this.getMyPosition().Equals(this.getLocalTarget())) ||
+			((this.getGlobalTarget() != null) && this.getMyPosition().Equals(this.getGlobalTarget()))){
 		this.setGlobalTarget(null);
 		this.setMyState(CurrentState.NEUTRAL);
 		this.setSpeed(0);
@@ -1570,11 +1547,11 @@ private void determineLocalTarget() throws UnitException{
 /**
  * Sets the unit to work
  * @post If the unit was resting and the initial recovery time is fulfilled, or the unit wasn't doing anything, it started working.
- * 		 | if ((this.getMyState() == CurrentState.RESTING && hasRested) || this.getMyState()==CurrentState.NEUTRAL)
+ * 		 | if ((this.getMyState() == CurrentState.RESTING && this.getHasRested()) || this.getMyState()==CurrentState.NEUTRAL)
  * 		 | then new.getMyState() == CurrentState.WORKING and new.getMyTimeState().getTrackTimeWork() == 0
  */
 public void startWorking(){
-	if ((this.getMyState() == CurrentState.RESTING && hasRested) || this.getMyState() == CurrentState.NEUTRAL){
+	if ((this.getMyState() == CurrentState.RESTING && this.getHasRested()) || this.getMyState() == CurrentState.NEUTRAL){
 		this.setMyState(CurrentState.WORKING);
 		this.getMyTimeState().setTrackTimeWork(0);
 	}
@@ -1612,7 +1589,7 @@ private void finishWork(){
 }
 
 /**
- * Makes the unit start resting
+ * Initiates resting for this unit.
  * @post If the unit wasn't fighting or already resting, the unit has started resting.
  * 		| if (this.getMyState()==CurrentState.MOVING || this.getMyState()==CurrentState.NEUTRAL || this.getMyState()==CurrentState.WORKING)
  * 		| then new.getMyState()==CurrentState.RESTING and new.getMyTimeState().getTrackTimeRest()==0 
@@ -1629,7 +1606,7 @@ public void startResting(){
 }
 
 /**
- * Makes the unit start defending to attacker.
+ * Initiates this units defense against the attacker.
  * @param attacker
  * 			The unit attacking this unit.
  * @post This unit starts defending against attacker.
@@ -1643,34 +1620,40 @@ public void startDefending(Unit attacker){
 }
 
 /**
- * Makes the unit start attacking defender.
- * @param defender
- * 			The unit to attack.			
+ * Initiates this units attack of the defender.		
  * @post If the unit wasn't already defending or attacking and defender is within reach,
  * 		 the unit starts attacking defender and turns to him.
  * 		| if (!(this.getMyState()==CurrentState.DEFENDING || this.getMyState()==CurrentState.ATTACKING) && targetWithinReach(defender))
- * 		| then new.getMyState()==CurrentState.ATTACKING and new.getOrientation()==Math.atan2(defender.getypos()-this.getypos(),defender.getxpos()-this.getxpos())
- * 		| 	and new.getMyTimeState().getAttackTime()==0 and new.getCurrentTarget()==defender
+ * 		| then new.getMyState()==CurrentState.ATTACKING and new.getOrientation()==Math.atan2(this.getDefender().getypos()-this.getypos(),this.getDefender().getxpos()-this.getxpos())
+ * 		| 	and new.getMyTimeState().getAttackTime()==0
  * @effect If this unit wasn't already defending or attacking and defender is within reach,
  * 		   defender starts defending against this unit.
- * 		| if (!(this.getMyState()==CurrentState.DEFENDING || this.getMyState()==CurrentState.ATTACKING) && targetWithinReach(defender))
- * 		| then defender.startDefending(this)
+ * 		| if (!(this.getMyState()==CurrentState.DEFENDING || this.getMyState()==CurrentState.ATTACKING) && targetWithinReach(this.getDefender()))
+ * 		| then this.getDefender().startDefending(this)
  */
 private void startAttacking(){
-	if (targetWithinReach(this.getCurrentTarget())){
+	if (targetWithinReach(this.getDefender())){
 		this.setMyState(CurrentState.ATTACKING);
-		this.setOrientation((float) Math.atan2(this.getCurrentTarget().getypos()-this.getypos(), this.getCurrentTarget().getxpos()-this.getxpos()));
+		this.setOrientation((float) Math.atan2(this.getDefender().getypos()-this.getypos(), this.getDefender().getxpos()-this.getxpos()));
 		this.getMyTimeState().setAttackTime(0);
-		this.getCurrentTarget().startDefending(this);
+		this.getDefender().startDefending(this);
 	} else {
 		this.setMyState(CurrentState.MOVING);
 	}
 }
 
+/**
+ * Prepares this unit to start the attack of unit defender.
+ * @param defender
+ * 			The unit to attack.
+ * @post If this unit can attack, its state is set to pending attack and its defender is set.
+ * 		 | if (!(this.getMyState()==CurrentState.DEFENDING || this.getMyState()==CurrentState.ATTACKING))
+ * 		 | then new.getMyState()==CurrentState.ATTACK_PENDING and new.getDefender()==defender
+ */
 public void initiateAttack(Unit defender){
 	if (!(this.getMyState() == CurrentState.DEFENDING || this.getMyState() == CurrentState.ATTACKING)){
 		this.setMyState(CurrentState.ATTACK_PENDING);
-		this.setCurrentTarget(defender);
+		this.setDefender(defender);
 	}
 }
 
@@ -1698,6 +1681,8 @@ public boolean targetWithinReach(Unit defender){
  * Defends against the attacker.
  * @param attacker
  * 			The unit attacking this unit
+ * @post The units state is set to neutral.
+ * 		 | new.getMyState() == CurrentState.NEUTRAL
  * @effect If this unit has dodged attackers attack, it jumped away.
  * 		 Otherwise if it hasn't blocked attackers attack, it took damage.
  * 		| if (dodge(attacker))
@@ -1705,7 +1690,8 @@ public boolean targetWithinReach(Unit defender){
  * 		| otherwise if (!blocked(attacker))
  * 		| takeDamage(attacker)
  * @throws UnitException
- //TODO 
+ * 			Throws a UnitException if the unit tries to jump away and jumpAway() throws an exception.
+ * @note	UnitException can't be thrown. jumpAway() will never throw an exception.
  */
 public void defend(Unit attacker) throws UnitException{
 	if (dodge(attacker)){
@@ -1716,6 +1702,9 @@ public void defend(Unit attacker) throws UnitException{
 	this.setMyState(CurrentState.NEUTRAL);
 }
 
+/**
+ * A variable to generate random numbers.
+ */
 private static final Random random = new Random();
 
 /**
@@ -1729,9 +1718,6 @@ public boolean dodge(Unit attacker){
 	float prob =  (float) ((float) this.getAgility()/attacker.getAgility()/5.0);
 	return random.nextFloat()<prob;
 }
-
-//TODO
-
 /**
  * Updates the unit's position randomly in the close region(x+(-1..1) and y + (-1..1)) around the current position.
  * If that position isn't in the gaming field, the unit jumps away in the opposite direction.
@@ -1746,26 +1732,26 @@ public boolean dodge(Unit attacker){
  * 		 | otherwise new.getMyPosition.getxpos() == this.getMyPosition.getxpos() - dx and
  * 					 new.getMyPosition.getypos() == this.getMyPosition.getypos() - dy
  * @throws UnitException
- *TODO: wederom trivaal geval
+ *  		Throws an exception if either setxpos() or setypos() throws an exception.
+ * @note This exception will never be thrown.
  */
 public void jumpAway() throws UnitException{
 	float xrand = (random.nextFloat())*2-1;
 	float yrand = (random.nextFloat())*2-1;
 	try{
-		myPosition.setxpos(myPosition.getxpos()+xrand);
-		myPosition.setypos(myPosition.getypos()+yrand);
+		this.setxpos(this.getxpos()+xrand);
+		this.setypos(this.getypos()+yrand);
 	} catch (UnitException e) {
-		myPosition.setxpos(myPosition.getxpos()-xrand);
-		myPosition.setypos(myPosition.getypos()-yrand);
+		this.setxpos(this.getxpos()-xrand);
+		this.setypos(this.getypos()-yrand);
 	}
 }
 /**
- * Check whether the Unit has blocked the attack depending on the calculated probability.
+ * Checks whether the Unit has blocked the attack depending on the calculated probability.
  * @param attacker
  * 		  The unit that attacks this unit.
  * @return returns true if the random generated float is smaller than the calculated probability
- * 		   | result == (randomNumberBetween(0..1)<calculateProbability(attacker))
- * 			
+ * 		   | result == (randomNumberBetween(0..1)<calculateProbability(attacker))	
  */
 public boolean blocked(Unit attacker){
 	float prob = calculateProbability(attacker);
@@ -1801,7 +1787,7 @@ public void takeDamage(Unit attacker){
 		this.setCurrentHP(this.getCurrentHP()-damage);
 	}
 }
-//TODO: @effect en @post zitten verweven, goed zo en ik twijfel over die else
+
 /**
  * The unit rests for a period dt, HP en SP are recovered depending on the period dt and the not yet used rest time of the 
  * unit's time state. 
@@ -1823,32 +1809,25 @@ public void takeDamage(Unit attacker){
  * @post  If the currentHP of the unit isn't smaller than the max HP, the new rest time is assigned.
  * 			| if (!this.getCurrentHP()<this.getMaxHP())
  * 			| then new.getMyTimeState().getTrackTimeRest() == healSPAndCalculateNotYetUsedRestTime(..)
- * @effect If the units HP and SP are equal to respectivily  the maxHP and maxSP, this unit stops resting
+ * @effect If the units HP and SP are equal to respectively the maxHP and maxSP, this unit stops resting
  * 			| if (this.getCurrentHP() == this.getMaxHP() && this.getCurrentSP() == this.getMaxSP())
  * 			| then restingIsDone();
  */
 public void rest(double dt){
 	this.getMyTimeState().setTimeRested(this.getMyTimeState().getTimeRested()+dt);
 	hasRestedMinimumTime(dt);
-	double notYetUsedRestTime = myTimeState.getTrackTimeRest();
+	double notYetUsedRestTime = this.getMyTimeState().getTrackTimeRest();
 	notYetUsedRestTime += dt;
 	if (this.getCurrentHP()< this.getMaxHP()){
 		notYetUsedRestTime = healHPAndCalculateNotYetUsedRestTime(notYetUsedRestTime);
 	}
-	System.out.println(this.getCurrentHP());
-	System.out.println(this.getMaxHP());
 	if (this.getCurrentHP()==this.getMaxHP()) {
-			System.out.println("finished resting 2");
 			notYetUsedRestTime = healSPAndCalculateNotYetUsedRestTime(notYetUsedRestTime);
-			System.out.println(this.getCurrentSP());
-			System.out.println(this.getMaxSP());
-			if (this.getCurrentSP() == this.getMaxSP()){
-				System.out.println("finished resting");
+			if (this.getCurrentSP() == this.getMaxSP())
 				restingIsDone();
 			}
-	}
 	
-	myTimeState.setTrackTimeRest(notYetUsedRestTime);
+	this.getMyTimeState().setTrackTimeRest(notYetUsedRestTime);
 	
 }
 /**
@@ -1861,8 +1840,8 @@ public void rest(double dt){
  * @post If the HP isn't fully recovered and the not yet used rest time is bigger than or equals the timeToHeal1HP, 1 HP is restored.
  *          | if (this.getCurrentHP()<this.getMaxHP() && notYetUsedRestTime>=timeToHeal1HP)
  *          | then new.getCurrentHP == this.getCurrentHP +1
- * @return
- * 	 		| returns the not yet used rest time of the timeState of this unit
+ * @return Returns the not yet used rest time of the timeState of this unit
+ * 	 	   | result == notYetUsedRestTime
  * @note Recursive structure won't be used with the current formula, maximum for toughness and
  * 		 maximum timestep dt of 0.2 seconds.
  */
@@ -1885,8 +1864,8 @@ private double healHPAndCalculateNotYetUsedRestTime(double notYetUsedRestTime) {
  * @post If the SP isn't fully recovered and the not yet used rest time is bigger than or equals the timeToHeal1SP, 1 SP is restored.
  *          | if (this.getCurrentSP()<this.getMaxSP() && notYetUsedRestTime>=timeToHeal1SP)
  *          | then new.getCurrentSP == this.getCurrentSP +1
- * @return
- * 	 		| returns the not yet used rest time of the timeState of this unit
+ * @return Returns the not yet used rest time of the timeState of this unit
+ * 	 	   | result == notYetUsedRestTime
  */
 private double healSPAndCalculateNotYetUsedRestTime(double notYetUsedRestTime) {
 	float timeToHeal1SP = (float)20/this.getToughness();
@@ -1897,6 +1876,7 @@ private double healSPAndCalculateNotYetUsedRestTime(double notYetUsedRestTime) {
 		return notYetUsedRestTime;
 	}
 }
+
 /**
  * This method's makes the unit stop resting
  * @post The state of the unit is set on NEUTRAL
@@ -1904,33 +1884,38 @@ private double healSPAndCalculateNotYetUsedRestTime(double notYetUsedRestTime) {
  * @post The hasRested is set on true
  * 		 | new.getHasRested()==true
  * @post The time rested is reset to 0
- * 		 | new.getMyTimeState.getTimeRested() == 0;
+ * 		 | new.getMyTimeState().getTimeRested() == 0;
  */
 private void restingIsDone() {
 	this.setMyState(CurrentState.NEUTRAL);
 	this.setHasRested(true);
 	this.getMyTimeState().setTimeRested(0);
 }
+
 /**
  * A unit must rest for a minimum period of time, this method sets hasRested on true if this is the case.
  * @param dt
- * @post If the unit has rested long enough,longer than 40/toughness, hasRested is true
- * 		 | if (this.getMyTimeState().getTimeRested>= 40/this.getToughness())
- * 		 | then new.getHasRested== true;
+ * 			The time rested.
+ * @post If the unit has rested long enough, longer than 40/toughness, hasRested is set on true.
+ * 		 | if (this.getMyTimeState().getTimeRested()>=40/this.getToughness())
+ * 		 | then new.getHasRested()==true;
  */
 private void hasRestedMinimumTime(double dt) {
 	if (this.getMyTimeState().getTimeRested()>=(float) 40/this.getToughness()){
 		this.setHasRested(true);
 	}
 }
+
 /**
- * a final variable containing the possible states for a unit in the default behaviour.
+ * A final variable containing the possible states for a unit in the default behaviour.
  */
 private static final List<CurrentState> DEFAULTSTATES = Arrays.asList(CurrentState.WORKING, CurrentState.MOVING, CurrentState.RESTING);
+
 /**
- * a final variable containing the size of DEFAULTSTATES
+ * A final variable containing the size of DEFAULTSTATES
  */
 private static final int SIZE = DEFAULTSTATES.size();
+
 /**
  * Determines what default behaviour the unit executes.
  * @post If default is enabled this function randomly puts the unit in a default state.
@@ -1940,7 +1925,8 @@ private static final int SIZE = DEFAULTSTATES.size();
  * 		 | if (this.isDefaultBehaviourEnabled() && randomDefaultState == CurrentState.MOVING)
  * 		 | then new.globalTarget in map
  * @throws UnitException
- *TODO:weeral triviale exception
+ *			Throws an exception if Position(...) throws an exception.
+ * @note UnitException won't be thrown.
  */
 public void executeDefaultBehaviour() throws UnitException{
 	if (this.getDefaultBehaviourEnabled()){
@@ -1952,6 +1938,7 @@ public void executeDefaultBehaviour() throws UnitException{
 	}
 	}
 }
+
 /**
  * This method executes the attack.
  * The current state of this unit is set back to neutral, the given defender defends the attack 
@@ -1964,7 +1951,7 @@ public void executeDefaultBehaviour() throws UnitException{
  * 		   | new.getMyState()==CurrentState.NEUTRAL
  * 		   | new.getMyTimeState().getAttackTime()==0
  * @throws UnitException
- *TODO:			|Wederom triviale exception
+ *			Throws an exception if defend throws an exception.
  */
 public void attack(Unit defender) throws UnitException{
 	defender.defend(this);
